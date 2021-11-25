@@ -57,10 +57,10 @@ const App = () => {
     interceptors: {
       request: async ({ options, url, path, route }) => {
         options.headers.Accept = 'application/json'
-        options.headers['Access-Control-Allow-Origin'] = '*'
-        options.headers['Access-Control-Allow-Credentials'] = 'true'
-        options.headers['Access-Control-Allow-Headers'] = 'Content-Type, Accept, Authorization'
-        options.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT'
+        // options.headers['Access-Control-Allow-Origin'] = '*'
+        // options.headers['Access-Control-Allow-Credentials'] = 'true'
+        // options.headers['Access-Control-Allow-Headers'] = 'Access-Control-Allow-Headers, Origin, Content-Type, Accept, Access-Control-Request-Method, Access-Control-Request-Headers'
+        // options.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT'
 
         return options
       }
