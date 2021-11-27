@@ -1,5 +1,6 @@
 import React from 'react'
 import useFetch from 'use-http'
+import { useNavigate } from 'react-router-dom'
 
 import {
   Table,
@@ -7,20 +8,33 @@ import {
 } from 'antd'
 
 import { 
-  PlusCircleOutlined
+  PlusCircleOutlined,
+  DeleteOutlined
 } from '@ant-design/icons'
 
 // Local Imports
-import { apiRoutes, cacheBusting } from '../config/config'
+import { 
+  apiRoutes, 
+  cacheBusting,
+  categories
+} from '../config/config'
 
 // Component
 const NewList = () => {
+  //Hooks 
+  const navigate = useNavigate()
+
   // Fetch
   const {
     data: news,
     loading: newsLoading,
-    // get: getTimesheets
+    get: getNews
   } = useFetch(`${apiRoutes.listNews}${cacheBusting()}`, [])
+
+  const {
+    loading: deleteNewsLoading,
+    delete: deleteNews
+  } = useFetch()
 
   // Memos
   const columns = React.useMemo(() => ([
@@ -34,6 +48,8 @@ const NewList = () => {
       title: 'Category',
       dataIndex: 'category',
       key: 'category',
+      filters: categories.map(x => ({ text: x, value: x })),
+      onFilter: (value, record) => (record.category.indexOf(value) === 0),
       // align: 'center'
     },
     {
@@ -46,24 +62,48 @@ const NewList = () => {
       title: 'Video',
       dataIndex: 'url',
       key: 'url',
-      // align: 'center'
+      // align: 'center',
       render: (text, record) => (
         <iframe
           title={record.title}
           width="300" 
           height="150"
           src={record.url}
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         >
         </iframe>
       )
+    },
+    {
+      title: 'Action',
+      dataIndex: '_id',
+      key: '_id',
+      render: (text, record) => (
+        <div className="d-flex">
+          <Button
+            danger
+            type="primary"
+            shape="round" 
+            disabled={deleteNewsLoading}
+            icon={(<DeleteOutlined />)}
+            onClick={async () => {
+              const { _id } = record
+              await deleteNews(`${apiRoutes.deleteNews}/${_id}`)
+              getNews(cacheBusting())
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      )
     }
-    // {
-    //   title: 'State',
-    //   dataIndex: 'state',
-    //   key: 'state',
-    //   render: (state) => `${state?.name.charAt(0).toUpperCase()}${state?.name.slice(1)}`
-    // }
-  ]), [])
+  ]), [deleteNews, deleteNewsLoading, getNews])
+
+  // Callback
+  const handlerAddNew = React.useCallback(() => {
+    navigate('/addnew')
+  }, [navigate])
 
   return (
     <>
@@ -73,7 +113,7 @@ const NewList = () => {
           shape="round" 
           icon={(<PlusCircleOutlined />)} 
           size="large"
-          // onClick={handlerNewTimesheet}
+          onClick={handlerAddNew}
         >
           Add New 
         </Button>
@@ -81,7 +121,7 @@ const NewList = () => {
       <Table
         bordered
         columns={columns}
-        rowKey={record => record.id}
+        rowKey={record => record._id}
         dataSource={news}
         pagination={{
           disabled: true,

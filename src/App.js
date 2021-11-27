@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Provider } from 'use-http'
 import {
   Routes, 
@@ -24,6 +24,7 @@ import { API_DOMAIN } from './config/config';
 
 // Routes
 import NewList from './routes/NewList'
+import AddNew from './routes/AddNew'
 
 const { 
   Header,
@@ -46,6 +47,10 @@ const App = () => {
         label: 'News',
         icon: (<FileDoneOutlined />)
       }
+    }, 
+    {
+      path: '/addnew', 
+      element: (<AddNew />),
     }
   ]), [])
 
@@ -59,7 +64,7 @@ const App = () => {
         options.headers.Accept = 'application/json'
         // options.headers['Access-Control-Allow-Origin'] = '*'
         // options.headers['Access-Control-Allow-Credentials'] = 'true'
-        // options.headers['Access-Control-Allow-Headers'] = 'Access-Control-Allow-Headers, Origin, Content-Type, Accept, Access-Control-Request-Method, Access-Control-Request-Headers'
+        // options.headers['Access-Control-Allow-Headers'] = 'Authorization, X-Requested-With, Access-Control-Allow-Headers, Origin, Content-Type, Accept, Access-Control-Request-Method, Access-Control-Request-Headers'
         // options.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, PUT'
 
         return options
@@ -82,29 +87,13 @@ const App = () => {
           >
             {mainMenuItems.map((option) => (
               <Menu.Item 
-                key={option.path} 
+                key={option.menu.label} 
                 icon={option.menu.icon}
               >
                 <NavLink to={option.path}>{option.menu.label}</NavLink>
               </Menu.Item>
             ))}
           </Menu>
-          {/* <Menu 
-            theme="dark" 
-            mode="horizontal" 
-            className="login-menu"
-            selectedKeys={[pathname]}
-          >
-            {loginMenu.map((option) => (
-              <Menu.Item 
-                key={option.path} 
-                icon={option.icon}
-                disabled
-              >
-                <NavLink to={option.path}>{option.label}</NavLink>
-              </Menu.Item>
-            ))}
-          </Menu> */}
         </Header>
 
         <Content className="pt-4 ps-4 pe-4" style={{ overflowY: 'auto' }}>
